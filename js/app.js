@@ -1,12 +1,30 @@
+$(document).ready( function() {
+	$('.unanswered-getter').submit( function(e){ //submission elements are listened for on the unanswered-getter element
+		e.preventDefault();
+		// zero out results if previous search has run
+		$('.results').html('');								//The ' ' is used to clear the .results container in case there have been any prior searches
+		// get the value of the tags the user submitted
+		var tags = $(this).find("input[name='tags']").val();  //sets the value to what the user submitted
+		getUnanswered(tags);
+	});
+	$('.inspiration-getter').submit( function(e){  //listens for inspiration-getter element.
+		e.preventDefault();
+		$('.results').html('');
+		var tags = $(this).find("input[name='tags']").val();
+		getTopAnswerers(tags);
+	});
+});
+
+
 // this function takes the question object returned by the StackOverflow request
 // and returns new result to be appended to DOM
-var showQuestion = function(question) {
-	
+
+function showQuestion(question){
 	// clone our result template code
 	var result = $('.templates .question').clone(); //.clone() creates a deep copy of the .templates and .question elements
 	
 	// Set the question properties in result
-	var questionElem = result.find('.question-text a');
+	var questionElem = result.find('.question-text a'); // the find method of the first element of an array that passes a test. Here we are trying to find the question-text a element, I can see the question-text element, but what is a?
 	questionElem.attr('href', question.link);
 	questionElem.text(question.title);
 
@@ -31,16 +49,17 @@ var showQuestion = function(question) {
 	return result;
 };
 
-
 // this function takes the results object from StackOverflow
 // and returns the number of results and tags to be appended to DOM
-var showSearchResults = function(query, resultNum) {
+
+function showSearchResults(query,resultNum){
 	var results = resultNum + ' results for <strong>' + query + '</strong>';
 	return results;
-};
+}
 
 // takes error string and turns it into displayable DOM element
-var showError = function(error){
+
+function showError(error){
 	var errorElem = $('.templates .error').clone();
 	var errorText = '<p>' + error + '</p>';
 	errorElem.append(errorText);
@@ -48,13 +67,13 @@ var showError = function(error){
 
 // takes a string of semi-colon separated tags to be searched
 // for on StackOverflow
-var getUnanswered = function(tags) {							//
+function getUnanswered(tags){	
 	//this function calls the other functions in the middle of the file.
 	// the parameters we need to pass in our request to StackOverflow's API
 	var request = { 			//This object contains the parameters which will be passed in the GET request on the stackexchange API
 		tagged: tags,			
 		site: 'stackoverflow',
-		order: 'desc',
+		order: 'desc',//desc
 		sort: 'creation'
 	};
 	
@@ -82,13 +101,6 @@ var getUnanswered = function(tags) {							//
 };
 
 
-$(document).ready( function() {
-	$('.unanswered-getter').submit( function(e){ //submission elements are listened for on the unanswered-getter element
-		e.preventDefault();
-		// zero out results if previous search has run
-		$('.results').html('');								//The ' ' is used to clear the .results container in case there have been any prior searches
-		// get the value of the tags the user submitted
-		var tags = $(this).find("input[name='tags']").val();  //sets the value to what the user submitted
-		getUnanswered(tags);
-	});
-});
+function getTopAnswerers(tags){
+	alert(tags);
+}
