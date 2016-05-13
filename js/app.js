@@ -108,11 +108,22 @@ function getUnanswered(tags) {
 function showUser(object){
 	
 	console.log(object);
-	console.log("name: " + object.user.display_name);
-	console.log("reputation points: " + object.user.reputation);
-	console.log("link to profile image: " + object.user.profile_image);
-	console.log("post count: " + object.post_count);
-	console.log("score: " + object.score);
+	
+	var name = "name: " + object.user.display_name;
+	var rep_points = "reputation points: " + object.user.reputation;
+	var profile_image = "link to profile image: " + object.user.profile_image;
+	var post_count = "post count: " + object.post_count;
+	var score = "score: " + object.score;
+	
+	$('.results')
+	.append(
+		 '<p>' + name + '</p>' 
+		+'<p>' + rep_points + '</p>'
+		+'<p>' + profile_image + '</p>'
+		+'<p>' + post_count + '</p>'
+		+'<p>' + score + '</p>'
+		+ '<p>------------------------------------------</p>'
+	);
 }
 
 function getTopUsers(tags) {
@@ -123,7 +134,6 @@ function getTopUsers(tags) {
 		type: "GET",
 	}).done(function (result) {
 
-
 		$.each(result.items, function (key, value) {
 			showUser(value);
 		});
@@ -131,7 +141,7 @@ function getTopUsers(tags) {
 
 	}).fail(function (jqXHR, error) {
 		var errorElem = showError(error);
-		$('.search-results').append(errorElem);
+		$('.results').append(errorElem);
 	});
 };
 
