@@ -12,8 +12,8 @@ $(document).ready(function () {
 		e.preventDefault();
 		//zero out results if previous search has run
 		$('.results').html('');
-
-		getTopAnswerers($("#ig-input").val());
+		$('.search-results').html('');
+		getTopUsers($("#ig-input").val());
 	});
 });
 
@@ -105,7 +105,17 @@ function getUnanswered(tags) {
 };
 
 
-function getTopAnswerers(tags) {
+function showUser(object){
+	
+	console.log(object);
+	console.log("name: " + object.user.display_name);
+	console.log("reputation points: " + object.user.reputation);
+	console.log("link to profile image: " + object.user.profile_image);
+	console.log("post count: " + object.post_count);
+	console.log("score: " + object.score);
+}
+
+function getTopUsers(tags) {
 
 	$.ajax({
 		url: "https://api.stackexchange.com/2.2/tags/{" + tags + "}/top-answerers/all_time?site=stackoverflow",
@@ -115,8 +125,7 @@ function getTopAnswerers(tags) {
 
 
 		$.each(result.items, function (key, value) {
-			console.log(key);
-			console.log(value);
+			showUser(value);
 		});
 
 
@@ -126,6 +135,3 @@ function getTopAnswerers(tags) {
 	});
 };
 
-function showUser(user){
-	
-}
