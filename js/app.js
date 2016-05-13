@@ -4,14 +4,17 @@ $(document).ready( function() {
 		// zero out results if previous search has run
 		$('.results').html('');								//The ' ' is used to clear the .results container in case there have been any prior searches
 		// get the value of the tags the user submitted
-		var tags = $(this).find("input[name='tags']").val();  //sets the value to what the user submitted
+		var tags = $(this).find("input[name='tags']").val();  //sets the value to what the user submitted. 'this' refers to the unanswered-getter div
 		getUnanswered(tags);
+		console.log(this);
 	});
 	$('.inspiration-getter').submit( function(e){  //listens for inspiration-getter element.
 		e.preventDefault();
+		//zero out results if previous search has run
 		$('.results').html('');
 		var tags = $(this).find("input[name='tags']").val();
 		getTopAnswerers(tags);
+		console.log(this);
 	});
 });
 
@@ -21,17 +24,17 @@ $(document).ready( function() {
 
 function showQuestion(question){
 	// clone our result template code
-	var result = $('.templates .question').clone(); //.clone() creates a deep copy of the .templates and .question elements
+	var result = $('.templates .question').clone(); //.clone() creates a deep copy of the .templates and .question elements, to be duplicated
 	
 	// Set the question properties in result
 	var questionElem = result.find('.question-text a'); // the find method of the first element of an array that passes a test. Here we are trying to find the question-text a element, I can see the question-text element, but what is a?
-	questionElem.attr('href', question.link);
-	questionElem.text(question.title);
+	questionElem.attr('href', question.link); //returns link to the question. attr() sets or returns attributes and values of the selected elements.
+	questionElem.text(question.title); //changes the questionElem text to question.title
 
 	// set the date asked property in result
-	var asked = result.find('.asked-date');
-	var date = new Date(1000*question.creation_date);
-	asked.text(date.toString());
+	var asked = result.find('.asked-date'); //Finds the date in the array element
+	var date = new Date(1000*question.creation_date); //date returned in decimal
+	asked.text(date.toString()); //changes the text on asked to date
 
 	// set the .viewed for question property in result
 	var viewed = result.find('.viewed');
@@ -55,7 +58,7 @@ function showQuestion(question){
 function showSearchResults(query,resultNum){
 	var results = resultNum + ' results for <strong>' + query + '</strong>';
 	return results;
-}
+};
 
 // takes error string and turns it into displayable DOM element
 
@@ -73,7 +76,7 @@ function getUnanswered(tags){
 	var request = { 			//This object contains the parameters which will be passed in the GET request on the stackexchange API
 		tagged: tags,			
 		site: 'stackoverflow',
-		order: 'desc',//desc
+		order: 'desc',//descending order
 		sort: 'creation'
 	};
 	
@@ -83,7 +86,7 @@ function getUnanswered(tags){
 		dataType: "jsonp",//use jsonp to avoid cross origin issues
 		type: "GET",//Set the method to "GET"
 	})
-	.done(function(result){ //this waits for the ajax to return with a succesful promise object
+	.done(function(result){ //this waits for the ajax to return with a succesful promise object. fires when the ajax is finished
 		var searchResults = showSearchResults(request.tagged, result.items.length);
 
 		$('.search-results').html(searchResults);
@@ -98,9 +101,29 @@ function getUnanswered(tags){
 		var errorElem = showError(error);
 		$('.search-results').append(errorElem);
 	});
+console.log(request.tagged);
 };
 
 
 function getTopAnswerers(tags){
-	alert(tags);
-}
+	var request = {
+		tagged: tags,
+		site: 'stackoverflow',
+		period: 'all_time'
+	};
+	
+	$.ajax({
+		url:"https://api.stackexchange.com/docs/top-answerers-on-tags#period=all_time&filter=default&site=stackoverflow",
+		data: request,
+		dataType: "jsonp",
+		type: "GET",
+	})
+	.done(function(result){
+		
+	})
+	.fail(function(jqXHR,error){
+		var errorElem = showError(error);
+		$('.search-results').append(errorElem);
+	})
+console.log(request.tagged);
+};
