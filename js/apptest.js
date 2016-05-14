@@ -21,36 +21,6 @@ $(document).ready(function () {
 // this function takes the question object returned by the StackOverflow request
 // and returns new result to be appended to DOM
 
-function showQuestion(question) {
-	// clone our result template code
-	var result = $('.templates .question').clone(); //.clone() creates a deep copy of the .templates and .question elements, to be duplicated
-
-	// Set the question properties in result
-	var questionElem = result.find('.question-text a'); // the find method of the first element of an array that passes a test. Here we are trying to find the question-text a element, I can see the question-text element, but what is a?
-	questionElem.attr('href', question.link); //returns link to the question. attr() sets or returns attributes and values of the selected elements.
-	questionElem.text(question.title); //changes the questionElem text to question.title
-
-	// set the date asked property in result
-	var asked = result.find('.asked-date'); //Finds the date in the (.templates .question) clone
-	var date = new Date(1000 * question.creation_date); //date returned in decimal
-	asked.text(date.toString()); //changes the text on asked to date
-
-	// set the .viewed for question property in result
-	var viewed = result.find('.viewed');
-	viewed.text(question.view_count);
-
-	// set some properties related to asker
-	var asker = result.find('.asker');
-	asker.html('<p>Name: <a target="_blank" ' +
-		'href=https://stackoverflow.com/users/' + question.owner.user_id + ' >' +
-		question.owner.display_name +
-		'</a></p>' +
-		'<p>Reputation: ' + question.owner.reputation + '</p>'
-	);
-
-	return result;
-};
-
 // this function takes the results object from StackOverflow
 // and returns the number of results and tags to be appended to DOM
 
@@ -67,6 +37,26 @@ function showError(error) {
 	errorElem.append(errorText);
 };
 
+function showQuestion(question) {
+	console.log(question);
+	var result = $('.templates .question').clone();
+	
+	var questionElem = result.find('.question-text a');
+	questionElem.attr('href', question.link);
+	questionElem.text(question.title);
+	
+	var asked = result.find('.asked-date'); //Finds the date in the array element
+	var date = new Date(1000 * question.creation_date); //date returned in decimal
+	
+	console.log("questionElem: " + questionElem);
+	$('.results').append('<p> <b>Title:</b> ' + "<a href="+ question.link + ">" + question.title +"</a>" + '</p>')
+	.append('<p>Name: '+ question.owner.display_name + '</p>')
+	.append('<p> Date asked: ' + date.toString() + '</p>')
+	.append('<p>' + 'Number of Answers: '+question.answer_count + '<p>');
+	console.log(question.answer_count);
+	console.log(question.owner.display_name);
+};
+
 // takes a string of semi-colon separated tags to be searched
 // for on StackOverflow
 function getUnanswered(tags) {
@@ -78,8 +68,6 @@ function getUnanswered(tags) {
 		order: 'desc', //descending order
 		sort: 'creation' //sorder by creation date in descending order
 	};
-
-
 	$.ajax({ //This creates a variable whose value is a deferred object.
 		url: "https://api.stackexchange.com/2.2/questions/unanswered", //Here is the endpoint
 		data: request,
@@ -88,23 +76,21 @@ function getUnanswered(tags) {
 	})
 		.done(function (result) { //this waits for the ajax to return with a succesful promise object. fires when the ajax is finished
 			var searchResults = showSearchResults(request.tagged, result.items.length);
-
-			$('.search-results').html(searchResults);
-			//$.each is a higher order function. It takes an array and a function as an argument.
-			//The function is executed once for each item in the array.
-			$.each(result.items, function (i, item) {
-				var question = showQuestion(item);
-				$('.results').append(question);
+			$.each(result.items, function (i,item) {
+				showQuestion(item);
 			});
 		})
 		.fail(function (jqXHR, error) { //this waits for the ajax to return with an error promise object
 			var errorElem = showError(error);
 			$('.search-results').append(errorElem);
 		});
+	console.log();
 };
 
 
 function showUser(object){
+	
+	console.log(object);
 	
 	var displayobject = {
 	name: "Name: " +"<b>" +object.user.display_name + "</b>",
@@ -114,7 +100,7 @@ function showUser(object){
 	score: "Score: " + object.score
 	};
 	
-	var display =$('.results-container')
+	var display =$('.results')
 	.append(
 		 '<p>' + displayobject.name + '</p>' 
 		+'<p>' + displayobject.rep_points + '</p>'
@@ -123,7 +109,6 @@ function showUser(object){
 		+'<p>' + displayobject.score + '</p>'
 		+'</n>'
 	);
-	
 	return display;
 }
 
@@ -134,11 +119,9 @@ function getTopUsers(tags) {
 		dataType: "jsonp",
 		type: "GET",
 	}).done(function (result) {
-		var searchResults = showSearchResults(result, result.items.length);
-		console.log(searchResults);
+
 		$.each(result.items, function (key, value) {
-			var question = showUser(value);
-			//$('.results').append(value);
+		   showUser(value);
 		});
 
 
@@ -146,5 +129,7 @@ function getTopUsers(tags) {
 		var errorElem = showError(error);
 		$('.results').append(errorElem);
 	});
+	
+	
+	
 };
-

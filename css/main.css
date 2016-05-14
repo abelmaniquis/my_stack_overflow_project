@@ -1,3 +1,7 @@
+/*
+ Arial,"Helvetica Neue",Helvetica,sans-serif;
+*/
+
 .container {
 	margin: 3em auto;
 	width: 600px;
@@ -48,4 +52,8 @@
 
 .question{
 	background-color:#00ffff;
+	text-align:left;
+}
+
+.results-container{
 }
