@@ -76,7 +76,7 @@ function getUnanswered(tags) {
 		tagged: tags,
 		site: 'stackoverflow',
 		order: 'desc', //descending order
-		sort: 'creation'
+		sort: 'creation' //sorder by creation date in descending order
 	};
 
 
@@ -109,21 +109,24 @@ function showUser(object){
 	
 	console.log(object);
 	
-	var name = "name: " + object.user.display_name;
-	var rep_points = "reputation points: " + object.user.reputation;
-	var profile_image = "link to profile image: " + object.user.profile_image;
-	var post_count = "post count: " + object.post_count;
-	var score = "score: " + object.score;
+	var displayobject = {
+	name: "Name: " +"<b>" +object.user.display_name + "</b>",
+	rep_points: "Reputation points: " + object.user.rep,
+	profile_image:"Profile Image: " + "<a href =" + object.user.profile_image+">"+"link to profile image:</a> ",
+	post_count: "Post Count: " + object.post_count,
+	score: "Score: " + object.score
+	};
 	
-	$('.results')
+	var display =$('.results-container')
 	.append(
-		 '<p>' + name + '</p>' 
-		+'<p>' + rep_points + '</p>'
-		+'<p>' + profile_image + '</p>'
-		+'<p>' + post_count + '</p>'
-		+'<p>' + score + '</p>'
-		+ '<p>------------------------------------------</p>'
+		 '<p>' + displayobject.name + '</p>' 
+		+'<p>' + displayobject.rep_points + '</p>'
+		+'<p>' + displayobject.profile_image + '</p>'
+		+'<p>' + displayobject.post_count + '</p>'
+		+'<p>' + displayobject.score + '</p>'
+		+ '</n>'
 	);
+	return display;
 }
 
 function getTopUsers(tags) {
@@ -135,13 +138,14 @@ function getTopUsers(tags) {
 	}).done(function (result) {
 
 		$.each(result.items, function (key, value) {
-			showUser(value);
+			var question = showUser(value);
+			$('.results').append(value);
 		});
 
 
 	}).fail(function (jqXHR, error) {
 		var errorElem = showError(error);
-		$('.results').append(errorElem);
+		//$('.results').append(errorElem);
 	});
 };
 
