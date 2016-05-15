@@ -6,7 +6,6 @@ $(document).ready(function () {
 		// get the value of the tags the user submitted
 		var tags = $(this).find("input[name='tags']").val(); //sets the value to what the user submitted. 'this' refers to the unanswered-getter div
 		getUnanswered(tags);
-		console.log(this);
 	});
 	$('.inspiration-getter').submit(function (e) { //listens for inspiration-getter element.
 		e.preventDefault();
@@ -38,23 +37,26 @@ function showError(error) {
 };
 
 function showQuestion(question) {
-	console.log(question);
-	var result = $('.templates .question').clone();
 	
-	var questionElem = result.find('.question-text a');
-	questionElem.attr('href', question.link);
-	questionElem.text(question.title);
-	
-	var asked = result.find('.asked-date'); //Finds the date in the array element
 	var date = new Date(1000 * question.creation_date); //date returned in decimal
+	var questionObject = 
+	{
+		title: '<b>Question</b>: ' + '<a href=' + question.link + '>' + question.title + '<a>',
+		name: 'Name: ' + question.owner.display_name,
+		date: 'Date Asked: ' + date.toString() + '</p>',
+		answerCount: "Number of Answers: " + question.answer_count,
+	}
 	
-	console.log("questionElem: " + questionElem);
-	$('.results').append('<p> <b>Title:</b> ' + "<a href="+ question.link + ">" + question.title +"</a>" + '</p>')
-	.append('<p>Name: '+ question.owner.display_name + '</p>')
-	.append('<p> Date asked: ' + date.toString() + '</p>')
-	.append('<p>' + 'Number of Answers: '+question.answer_count + '<p>');
-	console.log(question.answer_count);
-	console.log(question.owner.display_name);
+	
+	$('.results')
+	.append( 
+		'<div class = display-container>'
+	  +	'<p>' + questionObject.title + '</p>'
+	  + '<p>' + questionObject.name + '</p>'
+	  + '<p>' + questionObject.date + '</p>'
+	  + '<p>' + questionObject.answerCount + '</p>'
+	  + '</n>'
+	  + '</div>')
 };
 
 // takes a string of semi-colon separated tags to be searched
@@ -84,7 +86,6 @@ function getUnanswered(tags) {
 			var errorElem = showError(error);
 			$('.search-results').append(errorElem);
 		});
-	console.log();
 };
 
 
@@ -93,27 +94,29 @@ function showUser(object){
 	console.log(object);
 	
 	var displayobject = {
-	name: "Name: " +"<b>" +object.user.display_name + "</b>",
-	rep_points: "Reputation points: " + object.user.rep,
-	profile_image:"Profile Image: " + "<a href =" + object.user.profile_image+">"+"link to profile image:</a> ",
-	post_count: "Post Count: " + object.post_count,
+	name:"Profile: " + "<a href =" + object.user.link + ">" +"<b>" +object.user.display_name + "</b>" + "</a>",
+	picture: '<img src=' + object.user.profile_image + '/>',
+	rep_points: "Reputation points: " + object.user.reputation.toString(),
+	postcount: "Post Count: " + object.post_count,
 	score: "Score: " + object.score
 	};
 	
 	var display =$('.results')
 	.append(
-		 '<p>' + displayobject.name + '</p>' 
+		'<div class=display-container>'
+		+'<p>' + displayobject.picture + '</p>'
+		+ '<p>' + displayobject.name + '</p>' 
 		+'<p>' + displayobject.rep_points + '</p>'
-		+'<p>' + displayobject.profile_image + '</p>'
-		+'<p>' + displayobject.post_count + '</p>'
+		+'<p>' + displayobject.postcount + '</p>'
 		+'<p>' + displayobject.score + '</p>'
 		+'</n>'
+		+'</div>'
 	);
 	return display;
 }
 
 function getTopUsers(tags) {
-
+	
 	$.ajax({
 		url: "https://api.stackexchange.com/2.2/tags/{" + tags + "}/top-answerers/all_time?site=stackoverflow",
 		dataType: "jsonp",
@@ -129,7 +132,5 @@ function getTopUsers(tags) {
 		var errorElem = showError(error);
 		$('.results').append(errorElem);
 	});
-	
-	
 	
 };

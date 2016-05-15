@@ -1,6 +1,11 @@
 /*
- Arial,"Helvetica Neue",Helvetica,sans-serif;
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro|Open+Sans' rel='stylesheet' type='text/css'>
+font-family: 'Source Sans Pro', sans-serif;
 */
+
+*{
+	font-family: 'Source Sans Pro', sans-serif;
+}
 
 .container {
 	margin: 3em auto;
@@ -12,7 +17,7 @@
 }
 
 .left {
-	float: left;
+	margin:auto;
 }
 
 .stack-image {
@@ -55,5 +60,11 @@
 	text-align:left;
 }
 
-.results-container{
+.display-container{
+	margin:20px;
+	border-bottom: 1px;
+	/*border-style:solid;*/
+	padding:10px;
+	
 }
+
