@@ -4,12 +4,13 @@ font-family: 'Source Sans Pro', sans-serif;
 */
 
 *{
+	box-sizing:border-box;
 	font-family: 'Source Sans Pro', sans-serif;
 }
 
 .container {
 	margin: 3em auto;
-	width: 600px;
+	width: 65%;
 }
 
 .hidden {
@@ -74,3 +75,8 @@ h1{
 	padding:10px;
 }
 
+@media only screen and (max-width: 500px){
+	body{
+		font-size:1.2em;
+	}
+}

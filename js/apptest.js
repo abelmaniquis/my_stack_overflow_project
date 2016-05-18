@@ -1,7 +1,7 @@
 $(document).ready(function () {
 
 	search('.unanswered-getter', "#uq-input", getData);
-	search('.inspiration-getter', "#ig-input", getData);
+	search('.inspiration-getter', "#ig-input", getTopUsers);
 
 });
 
@@ -20,8 +20,43 @@ function showError(error) {
 	errorElem.append(errorText);
 };
 
-function show(object) {
+function getData(tags){
+	console.log(tags);
+	 if("#ig-input"){
+	 	console.log("ig-input!");
+	 		var link = "https://api.stackexchange.com/2.2/questions/unanswered";
+	 		var request = {
+			tagged: tags,
+		    site: 'stackoverflow',
+		    order: 'desc',
+		    sort: 'creation'}
+	 }
+	 else if("#uq-input"){
+	 	console.log("ug-input!");
+	 	    var link = "https://api.stackexchange.com/2.2/tags/{" + tags + "}/top-answerers/all_time?site=stackoverflow";
+	 	    var request = null;
+	 }
+	 	
+	$.ajax({
+		url: link, //link
+		data: request, //link
+		dataType: "jsonp",
+		type: "GET",
+	})
+		.done(function (result) {
 
+			$.each(result.items, function (key, value) {
+				show(value);
+			});
+		})
+		.fail(function (jqXHR, error) {
+			var errorElem = showError(error);
+			$('.search-results').append(errorElem);
+		});
+}
+
+
+function show(object) {
 	if (object.user) {
 
 		var user = object.user;
@@ -49,15 +84,6 @@ function show(object) {
 	}
 };
 
-function getData(tags,fn){
-	if(this === "#uq-input"){
-		console.log('unanswered');
-	}
-	else if(this ==="#ig-input" ){
-		console.log('inspiration');
-	}
-	 
-}
 
 function getUnanswered(tags) {
 	console.log(tags);
@@ -100,7 +126,6 @@ function getTopUsers(tags){
 		$.each(result.items, function (key, value) {
 			show(value);
 		});
-
 
 	}).fail(function (jqXHR, error) {
 		var errorElem = showError(error);
