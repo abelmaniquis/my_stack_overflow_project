@@ -1,16 +1,23 @@
 $(document).ready(function () {
 
 	search('.unanswered-getter', "#uq-input", getData);
-	search('.inspiration-getter', "#ig-input", getTopUsers);
+	search('.inspiration-getter', "#ig-input", getData);
 
 });
 
 function search(element, input, fn) {
-	$(element).submit(function (e) {
+	$(element).submit(
+		function (e) {
 		e.preventDefault();
 		$('.results').html('');
 		$('.search-results').html('');
-		fn($(input).val(),fn);
+
+		if (input === '#uq-input') {
+			fn('uq', $(input).val());
+		} else {
+			fn('ig', $(input).val())
+		}
+
 	});
 }
 
@@ -20,39 +27,48 @@ function showError(error) {
 	errorElem.append(errorText);
 };
 
-function getData(tags){
-	console.log(tags);
-	 if("#ig-input"){
-	 	console.log("ig-input!");
-	 		var link = "https://api.stackexchange.com/2.2/questions/unanswered";
-	 		var request = {
-			tagged: tags,
-		    site: 'stackoverflow',
-		    order: 'desc',
-		    sort: 'creation'}
-	 }
-	 else if("#uq-input"){
-	 	console.log("ug-input!");
-	 	    var link = "https://api.stackexchange.com/2.2/tags/{" + tags + "}/top-answerers/all_time?site=stackoverflow";
-	 	    var request = null;
-	 }
-	 	
-	$.ajax({
-		url: link, //link
-		data: request, //link
-		dataType: "jsonp",
-		type: "GET",
-	})
-		.done(function (result) {
+function getData(type, tags) {
 
-			$.each(result.items, function (key, value) {
-				show(value);
-			});
-		})
-		.fail(function (jqXHR, error) {
-			var errorElem = showError(error);
-			$('.search-results').append(errorElem);
+	var CONFIG = {
+		UQ: 'https://api.stackexchange.com/2.2/questions/unanswered',
+		TU: "https://api.stackexchange.com/2.2/tags/{" + tags + "}/top-answerers/all_time?site=stackoverflow",
+		TAGGED: tags,
+		SITE: 'stackoverflow',
+		ORDER: 'desc',
+		SORT: 'creation'
+	};
+
+	var link;
+	var request;
+
+	if (type === 'uq') {
+		link = CONFIG.UQ;
+		request = {
+			tagged: CONFIG.TAGGED,
+			site: CONFIG.SITE,
+			order: CONFIG.ORDER,
+			sort: CONFIG.SORT
+		}
+	} else {
+		link = CONFIG.TU;
+		request = null;
+	}
+
+	$.ajax({
+		url: link,
+		data: request,
+		dataType: "jsonp",
+		type: "GET"
+	}).done(function (result) {
+
+		$.each(result.items, function (key, value) {
+			show(value);
 		});
+
+	}).fail(function (jqXHR, error) {
+		var errorElem = showError(error);
+		$('.search - results ').append(errorElem);
+	});
 }
 
 
@@ -62,7 +78,7 @@ function show(object) {
 		var user = object.user;
 		var obj = {
 			name: "Profile: " + "<a href =" + user.link + ">" + "<b>" + user.display_name + "</b>" + "</a>",
-			picture: '<img src=' + user.profile_image + '/>',
+			picture: '<img src = ' + user.profile_image + '/>',
 			rep_points: "Reputation points: " + user.reputation.toString(),
 			postcount: "Post Count: " + object.post_count,
 			score: "Score: " + object.score
@@ -71,65 +87,15 @@ function show(object) {
 	} else {
 
 		var obj = {
-			title: '<b>Question</b>: ' + '<a href=' + object.link + '>' + object.title + '<a>',
+			title: ' <b> Question </b>: ' + '<a href=' + object.link + '>' + object.title + '<a>',
 			name: 'Name: ' + object.owner.display_name,
-			date: 'Date Asked: ' + new Date(1000 * object.creation_date) + '</p>',
+			date: 'Date Asked: ' + new Date(1000 * object.creation_date) + '</p > ',
 			answerCount: "Number of Answers: " + object.answer_count,
 		}
 
 	}
 
 	for (var prop in obj) {
-		$('.results').append('<p>' + obj[prop] + '</p>');
+		$('.results ').append(' <p> ' + obj[prop] + ' </p>');
 	}
-};
-
-
-function getUnanswered(tags) {
-	console.log(tags);
-	var link = "https://api.stackexchange.com/2.2/questions/unanswered"
-	var request = {
-		tagged: tags,
-		site: 'stackoverflow',
-		order: 'desc',
-		sort: 'creation'
-	};
-	$.ajax({
-		url: link,
-		data: request,
-		dataType: "jsonp",
-		type: "GET",
-	})
-		.done(function (result) {
-
-			$.each(result.items, function (i, item) {
-				show(item);
-			});
-		})
-		.fail(function (jqXHR, error) {
-			var errorElem = showError(error);
-			$('.search-results').append(errorElem);
-		});
-};
-
-function getTopUsers(tags){
-	console.log(tags);
-	
-	var link = "https://api.stackexchange.com/2.2/tags/{" + tags + "}/top-answerers/all_time?site=stackoverflow"
-	$.ajax({
-		url: link,
-		data:null,
-		dataType: "jsonp",
-		type: "GET",
-	}).done(function (result) {
-
-		$.each(result.items, function (key, value) {
-			show(value);
-		});
-
-	}).fail(function (jqXHR, error) {
-		var errorElem = showError(error);
-		$('.results').append(errorElem);
-	});
-
 };

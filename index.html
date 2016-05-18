@@ -22,12 +22,12 @@
 			<h3>Get Unanswered Questions</h3>
 			<p>Find unanswered questions by tag. For multiple tags, use a semi-colon to separate.</p>
 			<form class="unanswered-getter"><!--Cloned code supplies functionality for the first form.     This form has the html5 autofocus flag set. This will cause the browser to apply its default focus styles to this field upon page load-->
-				<input type="text" placeholder='e.g., "HTML" or "HTML;CSS"' name="tags" size="30" autofocus required>
+				<input type="text" id="uq-input" placeholder='e.g., "HTML" or "HTML;CSS"' name="tags" size="30" autofocus required>
 				<input type="submit" value="Submit">
 			</form>
 			<h3>View the Top Answerers for a Tag</h3>
 			<form class="inspiration-getter"> <!--This code is written in the second assignment, both forms have the required flag-->
-				<input type="text" placeholder="e.g., jQuery" name="answerers" size="30"  required>
+				<input type="text" id="ig-input" placeholder="e.g., jQuery" name="answerers" size="30"  required>
 				<input type="submit" value="Submit">
 			</form>
 		</div>
